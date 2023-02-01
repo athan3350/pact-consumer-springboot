@@ -42,7 +42,7 @@ task copyPacts(type: Copy) {
     description 'Copies the generated Pact json file to the provider resources directory'
 
     from('build/pacts/')
-    into('../provider/src/test/resources/pacts/')
+    into('./src/test/resources/pacts/')
 }
 
 def getGitHash = { ->
@@ -74,9 +74,9 @@ def getGitBranch = { ->
 //	}
 //}
 
-//pact {
-//    publish {
-//        pactBrokerUrl = 'https://yellowpepper.pactflow.io/'
-//        pactBrokerToken = 'nrjEWLNLW9eT00xVcmmatg'
-//    }
-//}
+pact {
+    publish {
+        pactBrokerUrl = System.getProperty("pactBrokerUrl")
+        pactBrokerToken = System.getProperty("pactBrokerToken")
+    }
+}
