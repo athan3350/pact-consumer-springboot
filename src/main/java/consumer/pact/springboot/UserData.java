@@ -1,10 +1,8 @@
 package consumer.pact.springboot;
 import lombok.Data;
 
-import java.util.UUID;
-
 @Data
-public class ClientData {
+public class UserData {
     private Long id;
     private String name;
     private String email;
