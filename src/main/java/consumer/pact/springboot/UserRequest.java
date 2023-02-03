@@ -32,17 +32,4 @@ public class UserRequest {
                 });
     }
 
-    public List<UserData> getUsers() throws IOException {
-        return Request.Get(this.url + "/api/v1/users")
-                .addHeader("Accept", "application/json")
-                .execute().handleResponse(httpResponse -> {
-                    try {
-                        ObjectMapper mapper = new ObjectMapper();
-                        return mapper.readValue(httpResponse.getEntity().getContent(), new TypeReference<List<UserData>>() {
-                        });
-                    } catch (JsonMappingException e) {
-                        throw new IOException(e);
-                    }
-                });
-    }
 }

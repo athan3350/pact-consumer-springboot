@@ -11,6 +11,8 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -30,10 +32,11 @@ class UserPactTest {
         body.stringType("password", "xhzASfe&1");
 
         return builder
-                .given("a product with ID 1 exists")
+                .given("a user with ID 1 exists")
                 .uponReceiving("a request to get a user")
                 .path("/api/v1/users/1")
                 .method("GET")
+//                .headers(headers())
                 .willRespondWith()
                 .status(200)
                 .body(body)
@@ -46,5 +49,11 @@ class UserPactTest {
         UserData user = new UserRequest().setUrl(mockServer.getUrl()).getUser(1);
 
         assertThat(user.getName(), is("Sebastian Suarez"));
+    }
+
+    private Map<String, String> headers() {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json; charset=utf-8");
+        return headers;
     }
 }
