@@ -9,11 +9,14 @@ import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static consumer.pact.springboot.constants.Constants.APPLICATION_JSON;
+import static consumer.pact.springboot.constants.Constants.GET_USER_PATH;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -21,24 +24,25 @@ import static org.hamcrest.Matchers.is;
 @PactTestFor(providerName = "provider-springboot")
 class UserPactTest {
 
-    @Pact(consumer="consumer-springboot")
+    @Pact(consumer = "consumer-springboot")
     public RequestResponsePact getUser(PactDslWithProvider builder) {
 
         PactDslJsonBody body = new PactDslJsonBody();
         body.stringType("id", "1");
-        body.stringType("name", "Sebastian Suarez");
-        body.stringType("email", "sebastian@email.com");
+        body.stringType("ownerName", "Sebastian Suarez");
+        body.stringType("ownerEmail", "sebastian@email.com");
         body.stringType("phone", "3145289654");
         body.stringType("password", "xhzASfe&1");
 
         return builder
                 .given("a user with ID 1 exists")
                 .uponReceiving("a request to get a user")
-                .path("/api/v1/users/1")
+                .path(GET_USER_PATH)
                 .method("GET")
-//                .headers(headers())
+                .headers(headers())
                 .willRespondWith()
                 .status(200)
+                .headers(headers())
                 .body(body)
                 .toPact();
     }
@@ -48,12 +52,15 @@ class UserPactTest {
     void testGetProduct(MockServer mockServer) throws IOException {
         UserData user = new UserRequest().setUrl(mockServer.getUrl()).getUser(1);
 
-        assertThat(user.getName(), is("Sebastian Suarez"));
+        assertThat(user.getOwnerName(), is("Sebastian Suarez"));
+        assertThat(user.getId(), is(1L));
+        assertThat(user.getPhone(), is("3145289654"));
+        assertThat(user.getOwnerEmail(), is("sebastian@email.com"));
     }
 
     private Map<String, String> headers() {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Type", "application/json; charset=utf-8");
+        headers.put(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
         return headers;
     }
 }
