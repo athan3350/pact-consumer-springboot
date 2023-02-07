@@ -34,7 +34,7 @@ test {
     useJUnitPlatform()
 }
 
-bootRun{
+bootRun {
     standardInput = System.in
 }
 
@@ -64,20 +64,14 @@ def getGitBranch = { ->
     return stdout.toString().trim()
 }
 
-//pact {
-//	publish {
-//		pactDirectory = 'consumer/build/pacts'
-//		pactBrokerUrl = 'http://localhost:9292/'
-//		pactBrokerUsername = 'demo_user_test'
-//		pactBrokerPassword = 'demo_password_test'
-//		tags = [getGitBranch(), 'test', 'prod']
-//		consumerVersion = getGitHash()
-//	}
-//}
+
 
 pact {
     publish {
+        def tag = System.getProperty("tag")
         pactBrokerUrl = System.getProperty("pactBrokerUrl")
         pactBrokerToken = System.getProperty("pactBrokerToken")
+        tags = tag == null ? [getGitBranch(), "DEV"] : [getGitBranch(), tag]
+        consumerVersion = System.getProperty("consumerVersion") == null ? getGitHash() : System.getProperty("consumerVersion")
     }
 }
